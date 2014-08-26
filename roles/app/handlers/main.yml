@@ -1,0 +1,27 @@
+# RESTART!!!
+- name: restart app
+  service: name=unicorn_{{appname}} state=restarted enabled=yes sleep=2
+  sudo: yes
+  tags:
+    - unicorn
+    - reboot
+
+- name: restart nginx
+  service: name=nginx state=reloaded enabled=yes
+  sudo: yes
+  tags:
+    - unicorn
+    - reboot    
+
+- name: elasticsearch services on boot
+  service: name=elasticsearch state=restarted enabled=yes
+  sudo: yes
+  tags:
+    - elasticsearch
+    - reboot
+
+- name: ensure app permissions
+  file: path=/home/{{user}}/app owner={{user}} group={{group}} mode=0777 recurse=yes
+  sudo: yes
+
+- include: ../../sidekiq/handlers/main.yml 

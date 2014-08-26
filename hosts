@@ -1,0 +1,53 @@
+; first time server connection
+; ansible-playbook -l golden3 vms.yml --tags "common" -e "ansible_ssh_user=vagrant" --ask-pass
+; BULLSHIT for local vagrant
+; dscacheutil -flushcache
+; sudo killall -HUP mDNSResponder
+[vms]
+; golden1 ansible_ssh_port=2222 ansible_ssh_host=127.0.0.1 ansible_ssh_user=deployer
+; golden2 ansible_ssh_port=2200 ansible_ssh_host=127.0.0.1 ansible_ssh_user=deployer
+golden3 ansible_ssh_port=2201 ansible_ssh_host=127.0.0.1 ansible_ssh_user=deployer
+; golden1 hostname=192.168.33.10 ansible_ssh_port=2222 ansible_ssh_user=deployer
+; golden2 hostname=192.168.33.11 ansible_ssh_user=deployer
+; ansible_ssh_port=2222 
+; ansible_ssh_port=2200 
+; golden3 hostname=192.168.33.12 ansible_ssh_user=vagrant
+; db   hostname=192.168.33.13 ansible_ssh_user=vagrant
+; db2   hostname=192.168.33.14 ansible_ssh_user=vagrant
+
+[webservers]
+; golden1
+; golden2
+golden3
+; web2
+; web3
+
+[dbservers]
+; golden1
+; golden2
+golden3
+; db
+; db2
+
+[loadbalancers]
+; golden1
+; golden2
+golden3
+
+; [elasticsearch]
+
+; golden1
+; web1
+; site02
+; site01-dr
+
+; [production]
+; site01
+; site02
+; db01
+; bastion
+
+; [databases]
+; [loadbalancers]
+
+; So I have a projec

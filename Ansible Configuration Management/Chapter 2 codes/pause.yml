@@ -1,0 +1,8 @@
+---
+- hosts: localhost
+  tasks:
+   - name: wait on user input
+     pause: prompt="Warning! Detected slight issue. ENTER to continue CTRL-C a to quit."
+
+   - name: timed wait
+     pause: seconds=30

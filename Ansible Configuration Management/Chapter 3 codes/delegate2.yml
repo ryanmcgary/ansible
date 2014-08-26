@@ -1,0 +1,6 @@
+---
+- name: Fetch configuration from all webservers
+  hosts: webservers
+  tasks:
+   - name: Get config
+     local_action: get_url dest=configs/{{ ansible_hostname }}.cfg url=http://{{ ansible_hostname }}/diagnostic/config

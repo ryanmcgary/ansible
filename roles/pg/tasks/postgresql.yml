@@ -1,0 +1,49 @@
+---
+- name: Fix encoding before install postgresql
+  shell: bash -lc "localedef -v -c -i en_US -f UTF-8 en_US.UTF-8; sudo locale-gen en_US.UTF-8;update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8"
+  sudo: yes
+  ignore_errors: True
+  tags:
+  - packages
+  - test
+
+- name: Install Postgresql server and client
+  apt: pkg={{ item }}-{{ postgresql.version }} state=installed update-cache=yes
+  register: postgresql_install
+  with_items:
+    - postgresql
+  # when: wanted_PSQL_version_installed.rc == 0 
+  tags:
+    - packages
+    - test
+
+- name: Install development header files
+  apt: pkg={{ item }} state=installed update-cache=yes
+  when: postgresql.install_development_headers == true
+  with_items:
+    - libpq-dev
+  # when: wanted_PSQL_version_installed.rc == 0
+  tags:
+    - packages
+    - test
+
+- name: Add PostgreSQL app role
+  shell: psql -c "CREATE USER {{appname}} WITH PASSWORD '{{dbpass}}' CREATEDB CREATEROLE REPLICATION;CREATE USER {{user_name}} WITH PASSWORD '{{dbpass}}' CREATEDB CREATEROLE REPLICATION;" #"
+  sudo: yes
+  sudo_user: postgres
+  ignore_errors: True
+  tags:
+  - configuration
+
+- name: Install PostgreSQL config file
+  template: src=postgresql.conf
+            dest=/etc/postgresql/{{ postgresql.version }}/main/postgresql.conf
+            owner={{ postgresql.user }} group={{ postgresql.group }}
+  notify:
+    - restart postgresql
+  # when: wanted_PSQL_version_installed.rc == 0
+  tags:
+    - configuration
+    - test
+
+

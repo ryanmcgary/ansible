@@ -1,0 +1,19 @@
+---
+- hosts: qroud
+  tasks:
+  - name: checkout Qroud
+    action: git repo=git@github.com:smarthall/Qroud.git dest=/opt/apps/Qroud force=no
+    notify:
+      - migrate db
+      - generate static
+      - restart httpd
+
+  handlers:
+  - name: migrate db
+    action: command chdir=/opt/apps/Qroud ./manage.py migrate .all
+
+  - name: generate static
+    action: command chdir=/opt/apps/Qroud ./manage.py collectstatic -c .noinput
+
+  - name: restart httpd
+    action: service name=httpd state=restarted

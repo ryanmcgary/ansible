@@ -1,0 +1,104 @@
+# http://www.ansibleworks.com/docs/modules.html#id331
+- name: Create {{ group }} group
+  group: name={{ group }} state=present
+
+# http://www.ansibleworks.com/docs/modules.html#user
+# http://www.ansibleworks.com/docs/modules.html#id346
+- name: Create {{ user }} account
+  user:
+    name={{ user }}
+    comment="{{ user_name }}"
+    group={{ user }}
+    createhome=yes
+    home=/home/{{ user }}
+    shell=/bin/bash
+    password={{ password }}
+    state=present
+
+# -----create ssh directory for default user
+# state not present
+- name: ensure ssh directory exists for {{ user }}
+  file: dest=/home/{{ user }}/.ssh owner={{ user }} group={{ group }} state=directory
+
+# http://www.ansibleworks.com/docs/modules.html#id239
+# makes sure public key is working
+- name: ensure public key is in authorized_keys
+  lineinfile:
+    dest=/home/{{ user }}/.ssh/authorized_keys
+    state=present
+    line="{{ lookup('file','~/.ssh/id_rsa.pub') }}"
+    insertafter=EOF
+    create=yes
+    owner={{ user }}
+    group={{ group }}
+    mode=600
+    regexp=^WILL_NOT_MATCH
+
+- name: Sudoers | update sudoers file and validate
+  lineinfile: "dest=/etc/sudoers
+    insertafter=EOF
+    line='{{ user }} ALL=(ALL) NOPASSWD: ALL'
+    regexp='{{ user }} ALL=(ALL) NOPASSWD: ALL'
+    state=present"
+
+# '
+- name: update ssh parameters
+  lineinfile:
+    dest=/etc/ssh/sshd_config
+    state=present 
+    regexp=^{{ item.key }}
+    line="{{ item.key }} {{ item.value }}"
+    insertafter=EOF
+  with_items:
+    - { key: 'PermitRootLogin', value: 'no' }
+    - { key: 'LoginGraceTime', value: '20' }
+    - { key: 'X11Forwarding', value: 'no' }
+    - { key: 'ClientAliveInterval', value: '30' }
+    - { key: 'ClientAliveCountMax', value: '1000' }
+  notify: # calls handler in webservers.yml & dbservers.yml
+    - restart ssh
+
+# ---- timezone config
+- name: Set timezone to UTC
+  action: shell echo Etc/UTC > /etc/timezone
+
+- name: Set localtime to UTC
+  file: src=/usr/share/zoneinfo/Etc/UTC dest=/etc/localtime
+
+# http://www.ansibleworks.com/docs/modules.html#id217
+- name: Reconfigure tzdata
+  action: command dpkg-reconfigure -f noninteractive tzdata
+
+# this is to deal with postgres default garbage
+# manual fix here https://gist.github.com/turboladen/6790847
+# http://stackoverflow.com/questions/13115692/encoding-utf8-does-not-match-locale-en-us-the-chosen-lc-ctype-setting-requires
+- name: update encoding
+  locale_gen: name=en_US.UTF-8 state=present
+
+- name: Update apt keys
+  command: apt-key update
+
+- name: Update apt cache
+  apt: update_cache=yes cache_valid_time=103600
+
+- name: Upgrade apt cache
+  apt: upgrade=full
+
+- name: Install additional packages
+  apt: package={{item}} state=present
+  with_items:
+    - make
+    - g++ 
+    - curl 
+    - libssl-dev
+    - apache2-utils
+    - git-core
+    - language-pack-en-base
+    # - libpam-cracklib
+
+# - name:  uncomment a line
+#   lineinfile: dest=/etc/nail.rc
+#               regexp='Test RegEx'
+#               line='Eat A Sandwhich'
+#               state=present
+#               # insertafter='^#   include "mod_fastc gi.conf"'

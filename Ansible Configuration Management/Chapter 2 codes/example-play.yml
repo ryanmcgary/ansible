@@ -1,0 +1,8 @@
+---
+- hosts: localhost
+  user: root
+  vars:
+    motd_warning: .WARNING: Use by ACME Employees ONLY
+  tasks:
+    - name: setup a MOTD
+      copy: dest=/etc/motd content={{ motd_warning }}

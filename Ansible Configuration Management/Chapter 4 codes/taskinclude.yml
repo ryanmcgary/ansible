@@ -1,0 +1,9 @@
+---
+- hosts: ansibletest
+  user: root
+  tasks:
+   - include: usersetup.yml user={{ item }}
+     with_items:
+      - mal
+      - dan
+      - kate

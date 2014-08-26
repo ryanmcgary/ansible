@@ -1,0 +1,14 @@
+---
+- name: config sendmail
+  command: make -C /etc/mail
+  notify: reload sendmail
+
+- name: config aliases
+  command: newaliases
+  notify: reload sendmail
+
+- name: reload sendmail
+  service: name=sendmail state=reloaded
+
+- name: restart sendmail
+  service: name=sendmail state=restarted

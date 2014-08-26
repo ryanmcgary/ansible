@@ -1,0 +1,28 @@
+# ---
+# - name: PostgreSQL | Checking installed version of PostgreSQL
+#   shell: '[[ "$(psql --version 2> /dev/null)" =~ psql\ \(PostgreSQL\)\ {{postgresql.version}} ]]'
+#   register: wanted_PSQL_version_installed
+#   ignore_errors: True
+#   tags:
+#     - apt
+#     - test
+
+# Needed for add-apt-repository
+- name: Install python-software-properties
+  apt: pkg=python-software-properties state=installed update-cache=yes
+  # when: wanted_PSQL_version_installed.rc == 0
+  tags:
+    - apt
+    - test
+
+- name: Add repository key
+  apt_key: data="{{ lookup('file', 'ACCC4CF8.asc') }}"  state=present
+  tags:
+    - apt
+    - test
+
+- name: Add PostgreSQL repository
+  apt_repository: repo='{{ postgresql.repo }}' state=present
+  tags:
+    - apt
+    - test

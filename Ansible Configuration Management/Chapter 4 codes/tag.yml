@@ -1,0 +1,47 @@
+---
+- name: Install and setup our webservers
+  hosts: webservers
+  tasks:
+  - name: install latest software
+    action: yum name=$item state=latest
+    notify: restart apache
+    tags:
+      - patch
+    with_items:
+    - httpd
+    - webalizer
+
+  - name: Create subdirectories
+    action: file dest=/var/www/html/$item state=directory mode=755 owner=apache group=apache
+    tags:
+      - deploy
+    with_items:
+      - pub
+
+  - name: Copy in web files
+    action: copy src=website/$item dest=/var/www/html/$item mode=755 owner=apache group=apache
+    tags:
+      - deploy
+    with_items:
+      - index.html
+      - logo.png
+      - style.css
+      - app.js
+      - pub/index.html
+
+  - name: Copy webserver config
+    tags:
+      - deploy
+      - config
+    action: copy src=website/httpd.conf dest=/etc/httpd/conf/httpd.conf mode=644 owner=root group=root
+    notify: reload apache
+
+  - name: set apache to start on startup
+    action: service name=httpd state=started enabled=yes
+
+ handlers:
+  - name: reload apache
+    service: name=httpd state=reloaded
+
+  - name: restart apache
+    service: name=httpd state=restarted

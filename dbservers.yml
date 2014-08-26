@@ -1,0 +1,7 @@
+- hosts: dbservers
+  sudo: yes
+  roles:
+    - {role: pg, tags: pg}
+  handlers:  
+  - name: restart ssh
+    service: name=ssh state=restarted

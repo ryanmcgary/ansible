@@ -1,0 +1,38 @@
+# TEST SSH Forwarding!
+- hosts: vms
+  sudo: true
+  tasks:
+  # link these handlers up somehow:
+  # ssh-add -l must have an identity listed. if not run the below command
+  # ssh-add -K
+  # /Users/ryanmcgary/.ssh/config
+    # Host 127.0.0.1
+    #   ForwardAgent yes
+  - name: ssh forwarding working1?
+    shell: bash -lc "eval `ssh-agent -s`"
+    sudo: no
+    tags:
+      - shhit
+
+  - name: ssh forwarding working1?
+    shell: bash -lc "ssh-add -l"
+    sudo: no
+    tags:
+      - shhit
+
+  - name: ssh forwarding working2?
+    shell: bash -lc "ssh -T git@github.com"
+    register: git_ssh_forwarding_connect
+    sudo: no
+    ignore_errors: yes
+    tags:
+      - shhit
+
+  - fail: msg="SSH Forwarding is failing when trying to connect to github. ensure that 'ssh-add -l' returns identity on local and remote machine. ssh-add -K may fix."
+    when: git_ssh_forwarding_connect.stderr.find("but GitHub does not provide shell access") == -1
+    tags:
+      - shhit
+
+  handlers:
+  - name: restart ssh
+    service: name=ssh state=restarted

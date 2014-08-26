@@ -1,0 +1,13 @@
+---
+  hosts: mailers
+  tasks:
+   - name: update sendmail
+     yum: name=sendmail state=latest
+     notify: restart sendmail
+
+   - name: configure sendmail
+     template: src=templates/sendmail.mc.j2 dest=/etc/mail/sendmail.mc
+     notify: config sendmail
+
+  handlers:
+   - include: sendmailhandlers.yml

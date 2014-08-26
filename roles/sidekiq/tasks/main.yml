@@ -1,0 +1,22 @@
+- name: Sidekiq config exists?
+  stat: path="{{appdir}}/config/sidekiq.yml" #"
+  register: sidekiq_used
+
+# setup unicorn as a service
+- name: write sidekiq.sh template as executable
+  action: template src=../templates/sidekiq.sh.j2 dest={{appdir}}/config/sidekiq.sh mode=0777
+  when: sidekiq_used.stat.exists
+
+#
+- name: symlink sidekiq.sh as service
+  file: src={{appdir}}/config/sidekiq.sh dest=/etc/init.d/sidekiq_{{appname}} owner={{user}} group={{group}} state=link
+  when: sidekiq_used.stat.exists
+  notify:
+    - App 777 permission
+
+- name: sidekiq service on boot
+  service: name=sidekiq_{{appname}} state=started enabled=yes args=99
+  when: sidekiq_used.stat.exists
+  sudo: yes
+
+# - include: ../handlers/main.yml

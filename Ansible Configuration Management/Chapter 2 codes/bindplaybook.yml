@@ -1,0 +1,6 @@
+---
+- name: Setup BIND
+  host: allnames
+  tasks:
+   - name: configure BIND
+     template: src=templates/named.conf.j2 dest=/etc/named.conf owner=root group=named mode=0640

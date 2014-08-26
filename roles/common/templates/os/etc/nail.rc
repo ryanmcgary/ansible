@@ -1,0 +1,5 @@
+{% for host in groups['dbservers'] %}
+   {{ hostvars[host]['ansible_eth1']['ipv4']['address'] }}
+{% endfor %}
+Test RegEx Place
+#['ipv4']['address']

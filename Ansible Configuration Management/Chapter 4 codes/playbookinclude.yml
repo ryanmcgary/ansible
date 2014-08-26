@@ -1,0 +1,11 @@
+---
+- include "drfailover.yml"
+- include "upgradeapp.yml"
+- include "drfailback.yml"
+
+- name: Notify management
+  hosts: local
+  tasks:
+   - local_action: mail to="mgmt-team@example.com" msg='The application has been upgraded and is now live'
+
+- include "drupgrade.yml"

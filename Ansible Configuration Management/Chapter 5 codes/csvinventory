@@ -1,0 +1,65 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import sys
+import csv
+import json
+
+def getlist(csvfile):
+    # Init local variables
+    glist = dict()
+    rowcount = 0
+
+    # Iterate over all the rows
+    for row in csvfile:
+        # Throw away the header (Row 0)
+        if rowcount != 0:
+            # Get the values out of the row
+            (group, host, variables) = row
+
+            # If this is the first time we've
+            # read this group create an empty
+            # list for it
+            if group not in glist:
+                glist[group] = list()
+
+            # Add the host to the list
+            glist[group].append(host)
+
+        # Count the rows we've processed
+        rowcount += 1
+
+    return glist
+
+def gethost(csvfile, host):
+    # Init local variables
+    rowcount = 0
+
+    # Iterate over all the rows
+    for row in csvfile:
+        # Throw away the header (Row 0)
+        if rowcount != 0 and row[1] == host:
+            # Get the values out of the row
+            variables = dict()
+            for kvpair in row[2].split():
+                key, value = kvpair.split('=', 1)
+                variables[key] = value
+
+            return variables
+
+        # Count the rows we've processed
+        rowcount += 1
+
+command = sys.argv[1]
+
+#Open the CSV and start parsing it
+with open('machines.csv', 'r') as infile:
+    result = dict()
+    csvfile = csv.reader(infile)
+
+    if command == '--list':
+        result = getlist(csvfile)
+    elif command == '--host':
+        result = gethost(csvfile, sys.argv[2])
+
+    print json.dumps(result)
