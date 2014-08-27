@@ -62,14 +62,11 @@
   action: template src=../templates/unicorn.sh.j2 dest={{appdir}}/config/unicorn.sh mode=0777
   tags:
   - unicorn
-#
+
 - name: symlink unicorn.sh as service
   file: src={{appdir}}/config/unicorn.sh dest=/etc/init.d/unicorn_{{appname}} owner={{user}} group={{group}} state=link
   tags:
   - unicorn
-
-# REGISTER SERVICES FOR STARTUP
-
 
 - name: app service on boot
   service: name=unicorn_{{appname}} state=started enabled=yes
