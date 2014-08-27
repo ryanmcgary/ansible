@@ -1,5 +1,0 @@
-# ansible-playbook site.yml
----
-- include: vms.yml
-- include: dbservers.yml
-- include: webservers.yml

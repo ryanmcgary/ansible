@@ -2,6 +2,7 @@
   sudo: yes
   roles:
     - {role: pg, tags: pg}
+    - {role: sqlite, tags: sqlite}
   handlers:  
   - name: restart ssh
     service: name=ssh state=restarted

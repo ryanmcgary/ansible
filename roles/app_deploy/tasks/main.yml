@@ -1,0 +1,51 @@
+- name: clone rails app from git
+  git: repo=git@github.com:ryanmcgary/skelly_rails.git dest={{appdir}}
+      accept_hostkey=True
+  sudo: no
+  register: git
+  notify:
+    - restart app
+    - restart nginx
+    - restart sidekiq
+  tags:
+    - deploy
+
+- name: GEM install project gems
+  shell: bash -lc "cd {{appdir}} && rbenv exec bundle install" #"
+  notify:
+    - restart app
+    - restart nginx
+    - restart sidekiq    
+  tags:
+    - deploy
+
+- name: check if database exists
+  shell: bash -lc "cd {{appdir}} && rake db:version" #"
+  ignore_errors: True
+  register: rake_db_version_result
+  tags:
+    - deploy
+
+- name: create database
+  shell: bash -lc "cd {{appdir}} && rake db:create:all"
+  when: rake_db_version_result|failed
+  tags:
+    - deploy
+
+- name: check if migration added
+  shell: bash -lc "cd {{appdir}} && rake db:abort_if_pending_migrations RAILS_ENV='production'" #"
+  ignore_errors: True
+  register: migration_change_result
+  tags:
+    - deploy
+
+- name: apply database migrations
+  shell: bash -lc "cd {{appdir}} && rake db:migrate RAILS_ENV='production'" #"
+  when: migration_change_result|failed
+  notify:
+    - restart app
+    - restart nginx
+    - restart sidekiq    
+  tags:
+    - deploy
+

@@ -5,10 +5,7 @@
   sudo: no
   register: git
   notify:
-    - restart app
-    - restart nginx
     - ensure app permissions
-    - restart sidekiq
   tags:
     - deploy
 
@@ -72,21 +69,12 @@
   - unicorn
 
 # REGISTER SERVICES FOR STARTUP
-- name: postgres services on boot
-  service: name=postgresql state=started enabled=yes
-  sudo: yes
+
 
 - name: app service on boot
   service: name=unicorn_{{appname}} state=started enabled=yes
   sudo: yes
 
-- name: nginx services on boot
-  service: name=nginx state=started enabled=yes
-  sudo: yes
-
-- name: elasticsearch services on boot
-  service: name=elasticsearch state=started enabled=yes
-  sudo: yes
 
 # RAILS_ENV=production bundle exec rake assets:precompile
 

@@ -5,10 +5,3 @@
   tags:
     - reboot
     - deploy
-    
-- name: restart sidekiq
-  service: name=sidekiq_{{appname}} state=restarted enabled=yes sleep=2
-  sudo: yes
-  tags:
-    - reboot
-    - deploy

@@ -69,20 +69,21 @@
 - name: Reconfigure tzdata
   action: command dpkg-reconfigure -f noninteractive tzdata
 
-# this is to deal with postgres default garbage
-# manual fix here https://gist.github.com/turboladen/6790847
-# http://stackoverflow.com/questions/13115692/encoding-utf8-does-not-match-locale-en-us-the-chosen-lc-ctype-setting-requires
-- name: update encoding
-  locale_gen: name=en_US.UTF-8 state=present
-
 - name: Update apt keys
   command: apt-key update
 
 - name: Update apt cache
   apt: update_cache=yes cache_valid_time=103600
 
+- name: elasticsearch sersvices on boot
+  service: name=elasticsearch state=stopped enabled=yes
+  sudo: yes
+  
 - name: Upgrade apt cache
-  apt: upgrade=full
+  apt: upgrade=full force=yes
+  sudo: yes
+  tags:
+    - shits
 
 - name: Install additional packages
   apt: package={{item}} state=present
@@ -94,7 +95,21 @@
     - apache2-utils
     - git-core
     - language-pack-en-base
+    - screen
+    - libreadline6
+    - libreadline6-dev
+    # - locales
     # - libpam-cracklib
+
+- name: elasticsearch sservices on boot
+  service: name=elasticsearch state=started enabled=yes
+  sudo: yes
+
+# this is to deal with postgres default garbage
+# manual fix here https://gist.github.com/turboladen/6790847
+# http://stackoverflow.com/questions/13115692/encoding-utf8-does-not-match-locale-en-us-the-chosen-lc-ctype-setting-requires
+# - name: update encoding
+#   locale_gen: name=en_US.UTF-8 state=present    
 
 # - name:  uncomment a line
 #   lineinfile: dest=/etc/nail.rc
