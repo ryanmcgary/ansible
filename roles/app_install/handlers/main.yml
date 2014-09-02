@@ -30,11 +30,3 @@
   tags:
     - unicorn
     - reboot
-
-- name: use remote DB
-  shell: bash -lc "ssh -f -N -L 5432:127.0.0.1:5432 deployer@192.168.33.11" #"
-  when: migration_change_result|failed
-  notify:
-    - restart app
-  tags:
-    - remote_db

@@ -25,15 +25,6 @@
     service: name=ssh state=restarted
 
 
-- hosts: loadbalancers
-  sudo: yes
-  roles:
-    - {role: nginx, tags: nginx}
-  handlers:
-  - name: restart ssh
-    service: name=ssh state=restarted    
-
-
 - hosts: webservers
   sudo: yes
   roles:
@@ -46,3 +37,13 @@
   handlers:
   - name: restart ssh
     service: name=ssh state=restarted
+    
+- hosts: loadbalancers
+  sudo: yes
+  roles:
+    - {role: nginx, tags: nginx}
+    # - {role: nginx_load_balance_only, tags: nginx_load_balance_only}
+  handlers:
+  - name: restart ssh
+    service: name=ssh state=restarted    
+

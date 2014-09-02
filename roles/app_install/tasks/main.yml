@@ -36,6 +36,7 @@
   register: rake_db_version_result
   tags:
     - deploy
+    - nginx_load_balance_only # this is a super hack right now to ensure that when a server is designated as a load balancer the IP address facts are gathered
 
 - name: create database
   shell: bash -lc "cd {{appdir}} && rake db:create:all"
@@ -79,6 +80,20 @@
   service: name=unicorn_{{appname}} state=started enabled=yes
   sudo: yes
 
+
+- name: use remote DB
+  shell: bash -lc "ssh -fNg -L 5432:127.0.0.1:5432 deployer@192.168.33.11" #"
+  sudo: no
+  register: remote_db_connection
+  notify:
+    - restart app
+  tags:
+    - remote_db
+# kill $(ps aux | grep '[p]ython csp_build.py' | awk '{print $2}')
+- name: debug remote DB
+  debug: remote_db_connection
+  tags:
+  - remote_db
 # - name: app service on boot
 #   service: name=unicorn_{{appname}} state=started enabled=yes
 #   sudo: yes

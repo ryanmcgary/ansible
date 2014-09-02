@@ -74,18 +74,19 @@ http {
     ##
 
     include /etc/nginx/conf.d/*.conf;
-    include /etc/nginx/sites-enabled/*;
+    upstream app_servers {
+        {% for host in groups['webservers'] %}
+            server {{ hostvars[host]['ansible_eth1']['ipv4']['address'] }};
+        {% endfor %}
+    }
 
-    # this may work in production?
-    # server {
-    #   listen   80 default;
-    #   server_name  everythingelse;
- 
-    #   # Everything is a 404 
-    #   location / { 
-    #       return 404;
-    #   }   
-    # }   
+    server {
+        listen 80 default;
+
+        location / {
+            proxy_pass http://app_servers;
+        }
+    } 
 }
 
 
