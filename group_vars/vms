@@ -4,7 +4,9 @@ user: deployer
 user_name: "deployer"
 password: $1$june$rhrvIxWO9/zw4M9EPMVq11
 
+domain_name: "dev.com"
 appname: "skelly_rails"
+git_repo: "git@github.com:ryanmcgary/skelly_rails.git"
 dbpass: "0think82"
 appdir: "/home/{{user}}/app/{{appname}}"
 

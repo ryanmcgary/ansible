@@ -18,7 +18,7 @@
 - hosts: dbservers
   sudo: yes
   roles:
-    - {role: pg, tags: pg}
+    # - {role: pg, tags: pg}
     - {role: sqlite, tags: sqlite}
   handlers:  
   - name: restart ssh
@@ -40,9 +40,9 @@
     - {role: rbenv, tags: rbenv}
     - {role: node, tags: node}
     - {role: redis, tags: redis}
-    - {role: elasticsearch, tags: elasticsearch}
-    - {role: app, tags: app}
-    - {role: sidekiq, tags: sidekiq}
+    # - {role: elasticsearch, tags: elasticsearch}
+    - {role: app_install, tags: app_install}
+    # - {role: sidekiq, tags: sidekiq}
   handlers:
   - name: restart ssh
     service: name=ssh state=restarted

@@ -11,19 +11,12 @@
   tags:
   - nginx
 
-- name: write app.conf
-  action: template src=../templates/app.conf.j2 dest=/etc/nginx/sites-enabled/{{domain_name}}.conf
+- name: write load_balance.conf
+  action: template src=../templates/load_balance.conf.j2 dest=/etc/nginx/sites-enabled/{{appname}}_load_balance.conf
   notify:
     - restart nginx
   tags:
     - nginx
-
-# - name: write load_balance.conf
-#   action: template src=../templates/load_balance.conf.j2 dest=/etc/nginx/sites-enabled/{{appname}}_load_balance.conf
-#   notify:
-#     - restart nginx
-#   tags:
-#     - nginx
 
 - name: delete default vhost
   action: file path=/etc/nginx/sites-enabled/default state=absent

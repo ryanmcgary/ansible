@@ -8,12 +8,13 @@
 - name: Read local ruby version value
   command: /bin/cat "{{appdir}}/.ruby-version"
   register: cat
+  when: rbenv_local_set.stat.exists
   tags:
     - deploy
 
 - name: Read local ruby version
   debug: msg="{{cat.stdout_lines[0]}}" #"
-  when: rbenv_local_set.stat.exists    
+  when: rbenv_local_set.stat.exists
   tags:
     - deploy
 

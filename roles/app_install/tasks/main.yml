@@ -1,10 +1,12 @@
 ---
 - name: clone rails app from git
-  git: repo=git@github.com:ryanmcgary/skelly_rails.git dest={{appdir}}
+  git: repo={{git_repo}} dest={{appdir}}
       accept_hostkey=True
   sudo: no
   register: git
   notify:
+    - restart app
+    - restart nginx
     - ensure app permissions
   tags:
     - deploy
@@ -22,9 +24,11 @@
     - restart app
     - restart nginx
     - ensure app permissions
-    - restart sidekiq    
   tags:
     - deploy
+
+- name: precompile assets for production
+  shell: bash -lc "cd {{appdir}} && RAILS_ENV=production bundle exec rake assets:precompile"
 
 - name: check if database exists
   shell: bash -lc "cd {{appdir}} && rake db:version" #"
@@ -53,7 +57,6 @@
     - restart app
     - restart nginx
     - ensure app permissions
-    - restart sidekiq    
   tags:
     - deploy
 
@@ -68,21 +71,28 @@
   tags:
   - unicorn
 
+- name: ensure app permissions
+  file: path=/home/{{user}}/app owner={{user}} group={{group}} mode=0777 recurse=yes
+  sudo: yes
+
 - name: app service on boot
   service: name=unicorn_{{appname}} state=started enabled=yes
   sudo: yes
 
+# - name: app service on boot
+#   service: name=unicorn_{{appname}} state=started enabled=yes
+#   sudo: yes
+# 5432
 
-# RAILS_ENV=production bundle exec rake assets:precompile
 
-# shell: bash -lc "cd {{appdir}} && rbenv exec bundle exec unicorn_rails -c config/unicorn.rb -D"
+# sudo netstat -plunt |grep postgres
 
-
-# Clean up tags & RUN SERVER FROM SCRATCH!
+# Clean up tags & RUN SERVER FROM SCRATCH! Done!
+# restore DB backup
+# backup db?
+# change settings to individual conf files per project https://github.com/Hack56/Rails-Template/wiki/Running-Multiple-Rails-Apps-on-Nginx
 
 # horizontal scaling support
   # setup tunnel options for DB,ELASTICSEARCH https://www.digitalocean.com/community/tutorials/how-to-secure-postgresql-on-an-ubuntu-vps
-  # ssh dave@server.domain.com -L 10293:127.0.0.1:3306
+  # ssh deployer@192.168.33.11 -L 5432:127.0.0.1:5432
   # create an automated way of each server to have a inter network public/private key
-  # make nginx conf dynamic
-  # make

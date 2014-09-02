@@ -1,8 +1,0 @@
-# initial update of OS for reach VM
-- hosts: vms
-  sudo: true
-  roles:
-  - {role: common, tags: common}
-  handlers:
-  - name: restart ssh
-    service: name=ssh state=restarted

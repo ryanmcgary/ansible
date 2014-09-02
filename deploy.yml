@@ -1,0 +1,40 @@
+- hosts: vms
+  sudo: true
+  roles:
+  # - {role: common, tags: common}
+  handlers:
+  - name: restart ssh
+    service: name=ssh state=restarted
+
+
+- hosts: dbservers
+  sudo: yes
+  roles:
+    # - {role: pg, tags: pg}
+    # - {role: sqlite, tags: sqlite}
+  handlers:  
+  - name: restart ssh
+    service: name=ssh state=restarted
+
+
+- hosts: loadbalancers
+  sudo: yes
+  roles:
+    # - {role: nginx, tags: nginx}
+  handlers:
+  - name: restart ssh
+    service: name=ssh state=restarted    
+
+
+- hosts: webservers
+  sudo: yes
+  roles:
+    # - {role: rbenv, tags: rbenv}
+    # - {role: node, tags: node}
+    # - {role: redis, tags: redis}
+    # - {role: elasticsearch, tags: elasticsearch}
+    - {role: app_deploy, tags: app_deploy}
+    # - {role: sidekiq, tags: sidekiq}
+  handlers:
+  - name: restart ssh
+    service: name=ssh state=restarted

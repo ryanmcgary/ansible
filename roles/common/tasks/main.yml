@@ -75,10 +75,6 @@
 - name: Update apt cache
   apt: update_cache=yes cache_valid_time=103600
 
-- name: elasticsearch sersvices on boot
-  service: name=elasticsearch state=stopped enabled=yes
-  sudo: yes
-  
 - name: Upgrade apt cache
   apt: upgrade=full force=yes
   sudo: yes
@@ -100,10 +96,6 @@
     - libreadline6-dev
     # - locales
     # - libpam-cracklib
-
-- name: elasticsearch sservices on boot
-  service: name=elasticsearch state=started enabled=yes
-  sudo: yes
 
 # this is to deal with postgres default garbage
 # manual fix here https://gist.github.com/turboladen/6790847

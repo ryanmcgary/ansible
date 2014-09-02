@@ -5,38 +5,38 @@
 ; sudo killall -HUP mDNSResponder
 ; stupidly enough it looks like you have to add your hostname 
 [vms]
-; golden1 ansible_ssh_port=2222 ansible_ssh_host=127.0.0.1 ansible_ssh_user=deployer
-; golden2 ansible_ssh_port=2200 ansible_ssh_host=127.0.0.1 ansible_ssh_user=deployer
-; golden3 ansible_ssh_port=2201 ansible_ssh_host=127.0.0.1 ansible_ssh_user=deployer
-summer ansible_ssh_host=192.241.195.199 ansible_ssh_user=deployer
-; golden2 ansible_ssh_host=192.168.33.11 ansible_ssh_user=deployer
-; ansible_ssh_port=2222 
-; ansible_ssh_port=2200 ykpgmvaieuhs
-; golden3 ansible_ssh_host=192.168.33.12 ansible_ssh_user=vagrant
+golden1 ansible_ssh_host=192.168.33.10 ansible_ssh_user=deployer
+golden2 ansible_ssh_host=192.168.33.11 ansible_ssh_user=deployer
+; golden3 ansible_ssh_host=192.168.33.12 ansible_ssh_user=deployer
+; summer ansible_ssh_host=192.241.195.199 ansible_ssh_user=deployer
+; local301 ansible_ssh_host=104.131.38.239 ansible_ssh_user=deployer
 ; db   ansible_ssh_host=192.168.33.13 ansible_ssh_user=vagrant
 ; db2   ansible_ssh_host=192.168.33.14 ansible_ssh_user=vagrant
 
 [webservers]
-; golden1
-; golden2
+golden1
+golden2
 ; golden3
-summer
+; summer
 ; web2
 ; web3
+; local301
 
 [dbservers]
-; golden1
-; golden2
+golden1
+golden2
 ; golden3
-summer
+; summer
 ; db
 ; db2
+; local301
 
 [loadbalancers]
-; golden1
-; golden2
+golden1
+golden2
 ; golden3
-summer
+; summer
+; local301
 
 ; [elasticsearch]
 

@@ -9,4 +9,4 @@
     notify:
       - restart nginx
     tags:
-      - remove_app
+      - remove_load_balance

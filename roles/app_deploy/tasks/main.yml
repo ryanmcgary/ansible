@@ -6,7 +6,6 @@
   notify:
     - restart app
     - restart nginx
-    - restart sidekiq
   tags:
     - deploy
 
@@ -15,9 +14,12 @@
   notify:
     - restart app
     - restart nginx
-    - restart sidekiq    
   tags:
     - deploy
+
+- name: precompile assets for production
+  shell: bash -lc "cd {{appdir}} && RAILS_ENV=production bundle exec rake assets:precompile"
+  ignore_errors: True
 
 - name: check if database exists
   shell: bash -lc "cd {{appdir}} && rake db:version" #"
@@ -44,8 +46,7 @@
   when: migration_change_result|failed
   notify:
     - restart app
-    - restart nginx
-    - restart sidekiq    
+    - restart nginx  
   tags:
     - deploy
 
