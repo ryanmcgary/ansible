@@ -1,0 +1,32 @@
+---
+- name: RBENV local ruby set?
+  stat: path="{{appdir}}/.ruby-version"
+  register: rbenv_local_set
+  tags:
+    - deploy
+
+- name: Read local ruby version value
+  command: /bin/cat "{{appdir}}/.ruby-version"
+  register: cat
+  when: rbenv_local_set.stat.exists
+  tags:
+    - deploy
+
+- name: Read local ruby version
+  debug: msg="{{cat.stdout_lines[0]}}" #"
+  when: rbenv_local_set.stat.exists
+  tags:
+    - deploy
+
+- name: RBENV install local ruby
+  shell: bash -lc "cd {{appdir}} && rbenv install -s && rbenv rehash" #"
+  when: rbenv_local_set.stat.exists
+  tags:
+    - deploy
+
+- name: RBENV set local ruby permissions
+  file: path=/usr/local/rbenv/versions/{{cat.stdout_lines[0]}} owner={{user}} group=root recurse=yes
+  sudo: yes
+  when: rbenv_local_set.stat.exists
+  tags:
+    - deploy
