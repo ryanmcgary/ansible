@@ -1,0 +1,6 @@
+# - name: kill remote DB SSH Tunnel
+#   shell: bash -lc "kill $(ps aux | grep '[5]432' | awk '{print $2}')" #"'
+#   sudo: no
+#   register: remote_db_connection
+#   tags:
+#     - remote_db  

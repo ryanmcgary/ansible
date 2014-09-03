@@ -1,57 +1,23 @@
-; first time server connection
-; ansible-playbook -l summer vms.yml --tags "common" -e "ansible_ssh_user=root" --ask-pass
-; BULLSHIT for local vagrant
-; dscacheutil -flushcache
-; sudo killall -HUP mDNSResponder
-; stupidly enough it looks like you have to add your hostname 
 [vms]
-golden1 ansible_ssh_host=192.168.33.10 ansible_ssh_user=deployer
-golden2 ansible_ssh_host=192.168.33.11 ansible_ssh_user=deployer
-; golden3 ansible_ssh_host=192.168.33.12 ansible_ssh_user=deployer
-; summer ansible_ssh_host=192.241.195.199 ansible_ssh_user=deployer
-; local301 ansible_ssh_host=104.131.38.239 ansible_ssh_user=deployer
-; db   ansible_ssh_host=192.168.33.13 ansible_ssh_user=vagrant
-; db2   ansible_ssh_host=192.168.33.14 ansible_ssh_user=vagrant
+golden1 ansible_ssh_host=192.168.33.10 ansible_ssh_user={{user}}
+golden2 ansible_ssh_host=192.168.33.11 ansible_ssh_user={{user}}
+golden3 ansible_ssh_host=192.168.33.12 ansible_ssh_user={{user}}
 
 [webservers]
 golden1
 golden2
-; golden3
-; summer
-; web2
-; web3
-; local301
+golden3
 
 [dbservers]
 golden1
 golden2
-; golden3
-; summer
-; db
-; db2
-; local301
+golden3
 
 [loadbalancers]
 golden1
 golden2
-; golden3
-; summer
-; local301
+golden3
 
 ; [elasticsearch]
 
-; golden1
-; web1
-; site02
-; site01-dr
-
 ; [production]
-; site01
-; site02
-; db01
-; bastion
-
-; [databases]
-; [loadbalancers]
-
-; So I have a projec

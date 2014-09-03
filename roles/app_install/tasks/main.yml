@@ -11,14 +11,12 @@
   tags:
     - deploy
 
-
 - include: rbenv.yml
 
-
-- name: GEM install bundler
+- name: GEM | install bundler
   shell: bash -lc "cd {{appdir}} && rbenv exec gem install --no-ri --no-rdoc bundle"
 
-- name: GEM install project gems
+- name: GEM | install project gems
   shell: bash -lc "cd {{appdir}} && rbenv exec bundle install" #"
   notify:
     - restart app
@@ -27,31 +25,33 @@
   tags:
     - deploy
 
-- name: precompile assets for production
+- name: APP | precompile assets for production
   shell: bash -lc "cd {{appdir}} && RAILS_ENV=production bundle exec rake assets:precompile"
+  tags:
+    - deploy
 
-- name: check if database exists
+- name: DB | check if database exists
   shell: bash -lc "cd {{appdir}} && rake db:version" #"
   ignore_errors: True
   register: rake_db_version_result
   tags:
     - deploy
-    - nginx_load_balance_only # this is a super hack right now to ensure that when a server is designated as a load balancer the IP address facts are gathered
+    - nginx_load_balancer # this is a super hack right now to ensure that when a server is designated as a load balancer the IP address facts are gathered
 
-- name: create database
+- name: DB | create database
   shell: bash -lc "cd {{appdir}} && rake db:create:all"
   when: rake_db_version_result|failed
   tags:
     - deploy
 
-- name: check if migration added
+- name: DB | check if migration added
   shell: bash -lc "cd {{appdir}} && rake db:abort_if_pending_migrations RAILS_ENV='production'" #"
   ignore_errors: True
   register: migration_change_result
   tags:
     - deploy
 
-- name: apply database migrations
+- name: DB | apply database migrations
   shell: bash -lc "cd {{appdir}} && rake db:migrate RAILS_ENV='production'" #"
   when: migration_change_result|failed
   notify:
@@ -62,52 +62,16 @@
     - deploy
 
 # setup unicorn as a service
-- name: write unicorn.sh template as executable
+- name: UNICORN | write unicorn.sh template as executable
   action: template src=../templates/unicorn.sh.j2 dest={{appdir}}/config/unicorn.sh mode=0777
-  tags:
-  - unicorn
 
-- name: symlink unicorn.sh as service
+- name: UNICORN | symlink unicorn.sh as service
   file: src={{appdir}}/config/unicorn.sh dest=/etc/init.d/unicorn_{{appname}} owner={{user}} group={{group}} state=link
-  tags:
-  - unicorn
 
-- name: ensure app permissions
+- name: UNICORN | ensure app permissions
   file: path=/home/{{user}}/app owner={{user}} group={{group}} mode=0777 recurse=yes
   sudo: yes
 
-- name: app service on boot
+- name: UNICORN | app service on boot
   service: name=unicorn_{{appname}} state=started enabled=yes
   sudo: yes
-
-
-- name: use remote DB
-  shell: bash -lc "ssh -fNg -L 5432:127.0.0.1:5432 deployer@192.168.33.11" #"
-  sudo: no
-  register: remote_db_connection
-  notify:
-    - restart app
-  tags:
-    - remote_db
-# kill $(ps aux | grep '[p]ython csp_build.py' | awk '{print $2}')
-- name: debug remote DB
-  debug: remote_db_connection
-  tags:
-  - remote_db
-# - name: app service on boot
-#   service: name=unicorn_{{appname}} state=started enabled=yes
-#   sudo: yes
-# 5432
-
-
-# sudo netstat -plunt |grep postgres
-
-# Clean up tags & RUN SERVER FROM SCRATCH! Done!
-# restore DB backup
-# backup db?
-# change settings to individual conf files per project https://github.com/Hack56/Rails-Template/wiki/Running-Multiple-Rails-Apps-on-Nginx
-
-# horizontal scaling support
-  # setup tunnel options for DB,ELASTICSEARCH https://www.digitalocean.com/community/tutorials/how-to-secure-postgresql-on-an-ubuntu-vps
-  # ssh deployer@192.168.33.11 -L 5432:127.0.0.1:5432
-  # create an automated way of each server to have a inter network public/private key

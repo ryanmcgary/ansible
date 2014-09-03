@@ -1,21 +1,23 @@
-# http://www.ansibleworks.com/docs/modules.html#id346
+# CUSTOMIZE THIS FOR YOUR APP
+domain_name: "dev.com"
+appname: "skelly_rails"
+git_repo: "git@github.com:ryanmcgary/skelly_rails.git"
+dbpass: "BLUESCLUES"
+
+# DON'T ALTER THE BELOW VALUES
+appdir: "/home/{{user}}/app/{{appname}}"
+
 group: deployer
 user: deployer
 user_name: "deployer"
 password: $1$june$rhrvIxWO9/zw4M9EPMVq11
-
-domain_name: "dev.com"
-appname: "skelly_rails"
-git_repo: "git@github.com:ryanmcgary/skelly_rails.git"
-dbpass: "0think82"
-appdir: "/home/{{user}}/app/{{appname}}"
 
 node_version: "0.10.24"
 node_prefix: "node-v{{ node_version }}"
 node_tarball: "{{ node_prefix }}.tar.gz"
 node_path: "/usr/local"
 redis_port: 6379
-# redis_password: 6379
+# redis_password: PASSWORD
 
 nginx_delete_default_vhost: false
 nginx_user: www-data
@@ -29,8 +31,8 @@ postgresql:
   repo: 'deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main'
   install_development_headers: true
 
-  user: deployer
-  group: deployer
+  user: "{{group}}"
+  group: "{{user}}"
 
   config:
     shared_buffers: 24MB

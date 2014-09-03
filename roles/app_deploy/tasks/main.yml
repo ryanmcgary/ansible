@@ -6,6 +6,7 @@
   notify:
     - restart app
     - restart nginx
+    # - restart sidekiq
   tags:
     - deploy
 
@@ -14,6 +15,7 @@
   notify:
     - restart app
     - restart nginx
+    # - restart sidekiq
   tags:
     - deploy
 
@@ -47,6 +49,7 @@
   notify:
     - restart app
     - restart nginx  
+    # - restart sidekiq
   tags:
     - deploy
 

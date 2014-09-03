@@ -1,10 +1,4 @@
-# ansible-playbook site.yml
 ---
-# - include: vms.yml
-# - include: dbservers.yml
-# - include: webservers.yml
-
-
 # initial update of OS for reach VM
 - hosts: vms
   sudo: true
@@ -18,8 +12,8 @@
 - hosts: dbservers
   sudo: yes
   roles:
-    # - {role: pg, tags: pg}
-    - {role: sqlite, tags: sqlite}
+    - {role: pg, tags: pg}
+    # - {role: sqlite, tags: sqlite} # really simple applications only
   handlers:  
   - name: restart ssh
     service: name=ssh state=restarted
@@ -31,18 +25,21 @@
     - {role: rbenv, tags: rbenv}
     - {role: node, tags: node}
     - {role: redis, tags: redis}
-    # - {role: elasticsearch, tags: elasticsearch}
+    # - {role: pg_ssh_tunnel, tags: pg_ssh_tunnel} # uncomment for multi server / horizontal scaling.
+    # - {role: elasticsearch, tags: elasticsearch} # uncomment for elasticsearch
     - {role: app_install, tags: app_install}
-    # - {role: sidekiq, tags: sidekiq}
+    # - {role: sidekiq, tags: sidekiq} # uncomment for sidekiq
+    - {role: nginx, tags: nginx}
   handlers:
   - name: restart ssh
     service: name=ssh state=restarted
-    
+
+
+# Must run --tags "nginx_load_balancer" for load balancer config to work
 - hosts: loadbalancers
   sudo: yes
   roles:
-    - {role: nginx, tags: nginx}
-    # - {role: nginx_load_balance_only, tags: nginx_load_balance_only}
+    # - {role: nginx_load_balancer, tags: nginx_load_balancer} # uncomment for multi server / horizontal scaling
   handlers:
   - name: restart ssh
     service: name=ssh state=restarted    
