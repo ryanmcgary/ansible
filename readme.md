@@ -21,7 +21,7 @@ After adding new server(s) to the ***ansible*** *hosts* file in the ansible root
 
 Run:
 
-`$ ansible-playbook -l SERVER_NAME config.yml --tags "common" -e "ansible_ssh_user=root" --ask-pass`
+`$ ansible-playbook -l SERVER_NAME config.yml --tags "common" -e "ansible_ssh_user=USER" --ask-pass`
 * Ommit -l if you are setting up multiple servers at one time.
 * Ommit --ask-pass if your public key has already been setup with remote servers
 
@@ -29,7 +29,7 @@ Run:
 
 Then run:
 
-  $ ansible-playbook config.yml
+  `$ ansible-playbook config.yml`
   
 #### Optional:  
 If you want sidekiq or elastisearch  uncomment their references from the following files:
@@ -50,7 +50,7 @@ If you want a multiple server setup (load balancer, multiple app servers, db ser
 # 3. Ongoing deployments
 After every git push run:
 
-  $ ansible-playbook deploy.yml
+  `$ ansible-playbook deploy.yml`
 
 - --tags "reboot" restarts all services including elasticsearch
 - by default deployment pulls git master (if changed), runs migrations (if changed), then restarts app server (+ sidekiq if applicable) and reloads nginx conf files.
