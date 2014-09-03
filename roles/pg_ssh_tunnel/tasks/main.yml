@@ -4,7 +4,7 @@
   sudo: yes
 
 - name: use remote DB
-  shell: bash -lc "ssh -fNg -L 5432:127.0.0.1:5432 deployer@192.168.33.11" #"
+  shell: bash -lc "ssh -fNg -oStrictHostKeyChecking=no -L 5432:127.0.0.1:5432 deployer@192.168.33.11 " #"
   sudo: no
   tags:
     - remote_db
