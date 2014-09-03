@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  author: "Andrew Kumanyaev"
+  description: rbenv
+  company: Undev
+  license: MIT
+  min_ansible_version: 1.4
+  version: 0.2
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - precise
+  categories:
+    - development
+    - system
+
+dependencies: []
