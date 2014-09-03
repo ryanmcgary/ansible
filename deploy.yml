@@ -31,7 +31,7 @@
 - hosts: loadbalancers
   sudo: yes
   roles:
-    # - {role: nginx_load_balancer, tags: nginx_load_balancer}
+    - {role: nginx_load_balancer, tags: nginx_load_balancer}
   handlers:
   - name: restart ssh
     service: name=ssh state=restarted    
