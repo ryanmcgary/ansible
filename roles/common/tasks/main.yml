@@ -94,6 +94,7 @@
     - screen
     - libreadline6
     - libreadline6-dev
+    - libpq-dev # this is required if rails project uses PG
     # - locales
     # - libpam-cracklib
 
