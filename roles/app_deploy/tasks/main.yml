@@ -1,5 +1,5 @@
 - name: GIT | clone rails app from git
-  git: repo=git@github.com:ryanmcgary/skelly_rails.git dest={{appdir}}
+  git: repo={{git_repo}} dest={{appdir}}
       accept_hostkey=True
   sudo: no
   register: git
