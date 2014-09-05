@@ -67,6 +67,10 @@ After every git push run:
 - How do I run multiple applications on a single server?
   - Just reclone the ansible directory for you new app and use the default single server config with your app specific group_vars/vms values and then deploy independently, no config should overwrite.
 - How do I run an adhoc command? 
+  
+  For rails applications you have to wrap your remote command in a call to bash, annoying but otherwise your ENV won't be loaded.
+  
+  `ansible webservers -m shell -a "bash -lc 'cd {{appdir}} && rails generate honeybadger --api-key 0f493c24'"`
 
   >`$ ansible webservers -m shell -a 'echo $TERM'` This runs "echo $TERM" on all webservers.
 
