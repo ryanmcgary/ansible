@@ -31,7 +31,7 @@
     - deploy
 
 - name: DB | check if database exists
-  shell: bash -lc "cd {{appdir}} && rake db:version" #"
+  shell: bash -lc "cd {{appdir}} && RAILS_ENV=production rake db:version" #"
   ignore_errors: True
   register: rake_db_version_result
   tags:
