@@ -21,19 +21,19 @@
   ignore_errors: True
 
 - name: DB | check if database exists
-  shell: bash -lc "cd {{appdir}} && rake db:version" #"
+  shell: bash -lc "cd {{appdir}} && RAILS_ENV=production rake db:version" #"
   ignore_errors: True
   register: rake_db_version_result
 
 - name: DB | create database
-  shell: bash -lc "cd {{appdir}} && rake db:create:all"
+  shell: bash -lc "cd {{appdir}} && RAILS_ENV=production rake db:create"
   when: rake_db_version_result|failed
 
 - name: DB | check if migration added
-  shell: bash -lc "cd {{appdir}} && rake db:abort_if_pending_migrations RAILS_ENV='production'" #"
+  shell: bash -lc "cd {{appdir}} && RAILS_ENV=production rake db:abort_if_pending_migrations" #"
   ignore_errors: True
   register: migration_change_result
 
 - name: DB| apply database migrations
-  shell: bash -lc "cd {{appdir}} && rake db:migrate RAILS_ENV='production'" #"
+  shell: bash -lc "cd {{appdir}} && RAILS_ENV=production rake db:migrate=" #"
   when: migration_change_result|failed
