@@ -39,20 +39,20 @@
     - nginx_load_balancer # this is a super hack right now to ensure that when a server is designated as a load balancer the IP address facts are gathered
 
 - name: DB | create database
-  shell: bash -lc "cd {{appdir}} && rake db:create:all"
+  shell: bash -lc "cd {{appdir}} && RAILS_ENV=production rake db:create"
   when: rake_db_version_result|failed
   tags:
     - deploy
 
 - name: DB | check if migration added
-  shell: bash -lc "cd {{appdir}} && rake db:abort_if_pending_migrations RAILS_ENV='production'" #"
+  shell: bash -lc "cd {{appdir}} && RAILS_ENV=production rake db:abort_if_pending_migrations" #"
   ignore_errors: True
   register: migration_change_result
   tags:
     - deploy
 
 - name: DB | apply database migrations
-  shell: bash -lc "cd {{appdir}} && rake db:migrate RAILS_ENV='production'" #"
+  shell: bash -lc "cd {{appdir}} && RAILS_ENV=production rake db:migrate" #"
   when: migration_change_result|failed
   notify:
     - restart app
