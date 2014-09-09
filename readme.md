@@ -103,6 +103,7 @@ To avoid the constant management of public keys between server, the playbooks ta
     StrictHostKeyChecking no
     UserKnownHostsFile=/dev/null
 
+On you local machine if running `ssh-add -l` returns no no identities run `ssh-add -K`
 
 ## TODO
 - db backups
